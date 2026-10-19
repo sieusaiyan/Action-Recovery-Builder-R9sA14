@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [o1s, p3s, r9s, t2s]
+        target: [r9s]
     steps:
 
     - name: Check Out
@@ -67,7 +67,7 @@ jobs:
 
     - name: Clone device tree
       run: |
-        git clone https://github.com/xfwdrev/android_device_samsung_exynos2100.git -b android-12.1 ./device/samsung/exynos2100
+        git clone https://github.com/MLXProjects/recovery_samsung_r9s.git -b fox-12.1 ./device/samsung/r9s
       working-directory: ${{ steps.pwd.outputs.workspace-folder }}
 
     - name: Set Swap Space
@@ -79,7 +79,7 @@ jobs:
       run: |
         export ALLOW_MISSING_DEPENDENCIES=true
         source build/envsetup.sh
-        lunch twrp_${{ matrix.target }}-eng && make clean && mka recoveryimage -j$(nproc --all)
+        lunch omni_${{ matrix.target }}-eng && make clean && mka recoveryimage -j$(nproc --all)
       working-directory: ${{ steps.pwd.outputs.workspace-folder }}
 
     - name: Set Date Variables
@@ -97,7 +97,7 @@ jobs:
         IMG_NAME="twrp-3.7.1_12-0-${{ matrix.target }}.img"
         TAR_NAME="twrp-3.7.1_12-0-${{ matrix.target }}.tar"
         cp recovery.img "$IMG_NAME"
-        tar -cvf "$TAR_NAME" recovery.img
+        tar --format=ustar -cvf "$TAR_NAME" recovery.img
       working-directory: ${{ steps.pwd.outputs.workspace-folder }}
 
     - name: Upload to Release
